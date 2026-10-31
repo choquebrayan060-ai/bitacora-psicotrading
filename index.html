@@ -733,15 +733,11 @@ function init(){
       $('googleLogin').dataset.bound='1';
       $('googleLogin').addEventListener('click',async()=>{
         try{
+          // En móviles/tablets usamos redirección: evita ventanas emergentes que Chrome puede cerrar.
           const provider=new firebase.auth.GoogleAuthProvider();
-          await firebaseAuth.signInWithPopup(provider);
+          await firebaseAuth.signInWithRedirect(provider);
         }catch(err){
-          if(err&&err.code==='auth/popup-blocked'){
-            try{await firebaseAuth.signInWithRedirect(new firebase.auth.GoogleAuthProvider());}
-            catch(e){flash('No se pudo iniciar sesión. Inténtalo nuevamente.');}
-          }else{
-            flash('No se pudo iniciar sesión: '+(err.code||'error'));
-          }
+          flash('No se pudo iniciar sesión: '+(err.code||err.message||'error'));
         }
       });
       $('logoutBtn').addEventListener('click',async()=>{
